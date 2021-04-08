@@ -11,7 +11,6 @@ for (const file of commandFiles) {
 	const command = require(`./Commands/${file}`);
 	client.commands.set(command.name, command);
 }
-
 client.once('ready', () => {
 	console.log('Ready!');
 });
