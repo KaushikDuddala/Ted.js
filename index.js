@@ -2,7 +2,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
-
+const StatusUpdater = require('@tmware/status-rotate')
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
@@ -13,6 +13,18 @@ for (const file of commandFiles) {
 }
 client.once('ready', () => {
 	console.log('Ready!');
+  const status = [
+    "Thanks Direjack",
+    "Prefix is `~`",
+    "I'm POG"
+  ]
+  let index = 0
+  setInterval(() => {
+    if (index === status.length) index = 0
+    const status2 = status[index]
+    client.user.setActivity(status2, { type:"PLAYING"}).catch(console.error)
+    index++
+  }, 2500)
 });
 
 client.on('message', message => {
@@ -33,6 +45,7 @@ client.on('message', message => {
 
 client.login(token);
 var http = require('http');
+
 
 http.createServer(function (req, res) {
   res.write("I'm alive");
