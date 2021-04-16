@@ -1,5 +1,5 @@
 module.exports = {
-  name: "clearchat",
+  name: "clear",
   description: "clears Chat",
   execute(message, args) {
     var yes = message.content

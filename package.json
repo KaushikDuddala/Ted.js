@@ -25,7 +25,6 @@
     "kahoot.js-updated": "^2.4.0",
     "node-fetch": "^2.6.1",
     "node-opus": "^0.3.3",
-    "nodemon": "^2.0.7",
     "python": "0.0.4",
     "random-name": "^0.1.2",
     "readline-sync": "^1.4.10",

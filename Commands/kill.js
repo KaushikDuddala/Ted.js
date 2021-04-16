@@ -4,8 +4,32 @@ module.exports = {
   usage: 'kill <user>',
   args: true,
   execute(message, args){
-    kill = ["died from nutting too hard. That's a bad way to go.",
-        "drowned in a nuclear reactor, definitely a accident.."]
+    kill = [
+      "drowned in a nuclear reactor, definitely a accident..", 
+    "got a bad grade", 
+    "forgot to clear their browser history",
+    "forgot to wear their armor",
+    "put their volume too high",
+    "didn't study",
+    "put too many bots into the kahoot game",
+    "forgot to attend class",
+    "set the volume on a odd number",
+    "went into the attic without turning on the light",
+    "forgot to mute",
+    "forgot to turn off their video",
+    "didn't bring their pencil",
+    "got bonked on the head",
+    "forgot to turn off the oven",
+    "forgot to plug in their computer",
+    "forgot to lock their computer",
+    "listened to `Party In The USA` ",
+    "hit the older brother",
+    "forgot to wear a mask",
+    "didn't join the kahoot in time",
+    "forgot to do the asynchronous assignment",
+    "put all the bots prefix the same",
+    
+    ]
     const user = message.mentions.members.first();
     if (!user){
       message.channel.send("Bruh you didnt say anyone to kill.")
@@ -16,7 +40,7 @@ module.exports = {
         let num = Math.random() * (max - min) + min;
         return Math.round(num);
       };
-      random2 = random(0, 1)
+      random2 = random(0, 19)
       message.channel.send("<@" + user + "> " + kill[random2])
     }
   }

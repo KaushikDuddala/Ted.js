@@ -18,7 +18,10 @@ module.exports = {
             message.channel.send(`<@${member.id}> user ${target} has been banned`)
         }
         else {
-          message.channel.send("You either dont have permission or you arent using the right format, the format is `~ban <User>` Make sure to ping them in <user> instead of saying their name")
+          const Embedp = new Discord.MessageEmbed()
+          .setTitle("Permission error")
+          .setDescription("Either, I don't have permission to ban members or you don't have permission to ban members, or you simply used the wrong format, the format is `~ban <user>`, Make sure to ping them in <user>")
+          message.channel.send(Embedp)
         }
     }
 }

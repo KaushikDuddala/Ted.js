@@ -35,6 +35,12 @@ fetch('https://Launcher.kaushikduddala.repl.co')
     kewl()
   }, 1000)
 });
+// Initialize the invite cache
+const invites = {};
+
+// A pretty useful method to create a delay without blocking the whole script.
+const wait = require('util').promisify(setTimeout);
+
 
 client.on('message', message => {
 
@@ -65,7 +71,7 @@ client.on('message', async msg => { // eslint-disable-line
 
     if (message.author.bot) return;
     if (message.channel.type === "dm") return; 
-    let prefix = ">"
+    let prefix = "~"
     if (!msg.content.startsWith(prefix)) return undefined;
  
     const args = msg.content.split(' ');
@@ -80,7 +86,7 @@ client.on('message', async msg => { // eslint-disable-line
       if (!args[1]) {
             return msg.channel.send(":x: What should I play m8?")
           }
-        const voiceChannel = 831960445928734731;
+        const voiceChannel = 763974089945251840;
         if (!voiceChannel) return msg.channel.send(':x: Join a voice channel to play music!');
  
         if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
@@ -102,9 +108,6 @@ client.on('message', async msg => { // eslint-disable-line
             .setTimestamp()
             return msg.channel.send(embed);
         } else {
-            try {
-                var video = await youtube.getVideo(url);
-            } catch (error) {
                 try {
                   msg.channel.send("🔍 Searching `"+searchString+"`").then(msg => {
                   })
@@ -113,13 +116,12 @@ client.on('message', async msg => { // eslint-disable-line
                 
                     const videoIndex = 1;
                     var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
-                } catch (err) {
+                }catch (err) {
                     console.error(err);
                     return msg.channel.send(':x: No result found.');
                 }
             }
             return handleVideo(video, msg, voiceChannel);
-        }
     } else if (command === 'youtube') {
           if (!args[0]) return msg.channel.send(":x: Please provide search query m8.")
         const voiceChannel = msg.member.voiceChannel;
@@ -174,14 +176,14 @@ client.on('message', async msg => { // eslint-disable-line
                             time: 10000,
                             errors: ['time']
                         });
-                    } catch (err) {
+                    }catch (err) {
                         console.error(err);
                         return msg.channel.send(':x: Invalid Value/Time\'s up, Cancelling video selection.');
                     }
                     try{
                     const videoIndex = parseInt(response.first().content);
                     var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
-                } catch (err) {
+                }catch (err) {
                     console.error(err);
                     return msg.channel.send(':x: No result found.');
                 }
@@ -197,39 +199,37 @@ client.on('message', async msg => { // eslint-disable-line
         msg.channel.send(":white_check_mark: Song Skipped!")
         return undefined;
     } else if (command === 'stop') {
-      const Channel = client.channels.cache.get("831960445928734731")
+      const Channel = client.channels.cache.get("763974089945251840")
         serverQueue.songs = [];
         Channel.leave();
         msg.channel.send(":white_check_mark: Disconnected!")
         return undefined;
     } else if (command === 'join') {
         if (!msg.member.voiceChannel) return msg.channel.send(':x: You are not in a voice channel!');
-        const Channel = client.channels.cache.get("831960445928734731")
+        const Channel = client.channels.cache.get("763974089945251840")
 
         Channel.join();
         msg.channel.send(":white_check_mark: Connected!")
         return undefined;
-    } else if (command === 'vol') {
-        if (!msg.member.voiceChannel) return msg.channel.send(':x: You are not in a voice channel!');
-        if (!serverQueue) return msg.channel.send(':x: There is nothing playing.');
+    } else if (command === 'vol' || command === 'volume') {
         if (!args[1]) {
-          let vEmbed = new Discord.RichEmbed()
+          let vEmbed = new Discord.MessageEmbed()
           .setAuthor("Current Volume", msg.guild.iconURL)
           .setColor("ORANGE")
           .setDescription(`**${(serverQueue.volume*20)}/100**`)
           .setFooter(client.user.tag, client.user.displayAvatarURL)
-        return msg.channel.send(vEmbed)}
-        if (!isNaN(args[0])) {
+        return msg.channel.send(vEmbed)
+        }else if (args[1] > 0 && args[1] < 101) {
         serverQueue.volume = args[1]/20;
         serverQueue.connection.dispatcher.setVolumeLogarithmic(args[1] / 100);
-       let Embed = new Discord.RichEmbed()
+       let Embed = new Discord.MessageEmbed()
           .setAuthor("Music Volume", msg.guild.iconURL)
           .setColor("ORANGE")
           .setDescription(`Volume Changed To **${args[1]}/100**.`)
           .setFooter(client.user.tag, client.user.displayAvatarURL)
         return msg.channel.send(Embed);
     } return msg.channel.send(":x: Provide a valid number between 1-100.");
-    } else if (command === 'np') {
+    }else if (command === 'np') {
         if (!serverQueue) return msg.channel.send(':x: There is nothing playing.');
       console.log(serverQueue.songs[0])
       const nsong = {
@@ -246,7 +246,7 @@ client.on('message', async msg => { // eslint-disable-line
       let index = "0"
         if (!serverQueue) return msg.channel.send(':x: There is nothing playing.');
         else {
-               let Embed = new Discord.RichEmbed()
+               let Embed = new Discord.MessageEmbed()
                    .setAuthor("MUSIC QUEUE", msg.author.avatarURL)
                    .setColor("RANDOM")
                  //  .setThumbnail(serverQueue.songs[0].get().Thumbnail)
@@ -290,7 +290,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
         duration: video.duration,
         thumbnail: `https://i.ytimg.com/vi/${video.id}/maxresdefault.jpg`
     };
-    if (!serverQueue) {
+    console.log(song)
         const queueConstruct = {
             textChannel: msg.channel,
             voiceChannel: voiceChannel,
@@ -304,51 +304,25 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
         queueConstruct.songs.push(song);
  
         try {
-          const Channel = client.channels.cache.get("831960445928734731")
+          const Channel = client.channels.cache.get("763974089945251840")
             var connection = await Channel.join();
             queueConstruct.connection  = connection;
-            console.log(connection)
             play("763889681531404308", queueConstruct.songs[0]);
         }catch (err) {
           console.log(err)
         }
-    } else {
-        
-        console.log(serverQueue.songs);
-       
-        
-        if (playlist) return undefined;
-        else {
-          const queueConstruct = {
-            textChannel: msg.channel,
-            voiceChannel: voiceChannel,
-            connection: null,
-            songs: [],
-            volume: 3,
-            playing: true
-        };
-          queueConstruct.connection  = connection;
-          serverQueue.songs.push(song);
-          play("763889681531404308", queueConstruct.songs[0])
-        }
     }
-    return undefined;
-}
 
  
-function play(guild, song) {
-
-    const serverQueue = queue.get("814609294032633896") ;
- 
-    if (!song) {
-        //serverQueue.voiceChannel.leave();
-        queue.delete(guild.id);
-        return;
-    }
-    
-const Channel = client.channels.cache.get("831960445928734731")
+function play(guild, song) {  
+    const serverQueue = queue.get("763889681531404308") ;
+  
+const Channel = client.channels.cache.get("763974089945251840")
+console.log("hello")
 const connection = Channel.join()
-console.log(queue)
+
+console.log(song.url)
+
 const dispatcher = serverQueue.connection.play(ytdl(song.url)).on('end', reason => {
             if (reason === 'Stream is not generating quickly enough.') {
               
@@ -361,6 +335,7 @@ const dispatcher = serverQueue.connection.play(ytdl(song.url)).on('end', reason 
         })
         .on('error', error => console.error(error));
     dispatcher.setVolumeLogarithmic(serverQueue.volume / 3);
+    console.log("bruh2")
 }
 http.createServer(function (req, res) {
   res.write("I'm alive");
