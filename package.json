@@ -30,6 +30,7 @@
     "python": "0.0.4",
     "random-name": "^0.1.2",
     "readline-sync": "^1.4.10",
+    "reconlx": "^1.2.41",
     "request": "^2.88.2",
     "simple-youtube-api": "^5.2.1",
     "snekfetch": "^4.0.4",
