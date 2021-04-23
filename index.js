@@ -18,7 +18,11 @@ client.once('ready', () => {
 	console.log('Ready!');
   const status = [
     "Prefix is `~`",
-    "I'm POG"
+    "I'm POG",
+    "I don't know what to put here :eyes:",
+    "Minecraft",
+    "Terraria",
+    "Busy being a good bot :D"
   ]
   let index = 0
   setInterval(() => {
