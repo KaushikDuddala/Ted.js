@@ -36,7 +36,7 @@
     "snekfetch": "^4.0.4",
     "youtube-search": "^1.1.6",
     "ytdl": "^1.4.1",
-    "ytdl-core": "^4.5.0",
+    "ytdl-core": "^4.7.0",
     "ytpl": "^2.1.1",
     "ytsearcher": "^1.2.4"
   }

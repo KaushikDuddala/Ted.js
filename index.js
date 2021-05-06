@@ -76,8 +76,11 @@ client.on('message', async message =>{
     const permissions = voiceChannel.permissionsFor(message.client.user)
     if(!permissions.has('CONNECT')) return message.channel.send("Bruh i dont have permission to connect :/")
     if(!permissions.has("SPEAK")) return message.channel.send("I can join but i dont have permissions to speak in the vc bruh")
-
-    const songInfo = await youtube.searchVideos(args[1]);
+    console.log(args)
+    args.shift();
+    console.log(args)
+    const lmaoSong2 = args.join(" ")
+    const songInfo = await youtube.searchVideos(lmaoSong2);
     const song = {
       title: Util.escapeMarkdown(songInfo.title),
       url: songInfo.url
