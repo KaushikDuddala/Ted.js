@@ -1,41 +1,35 @@
-const YouTube = require("discord-youtube-api"); //Api for searching youtube
+
+//Getting some basic Requires for plugins
+const YouTube = require("discord-youtube-api");
 const youtube = new YouTube
 ("AIzaSyA25eGUqxnjbAEEtPjx-plIA7m6raoBTPQ"); //API code
 const fs = require('fs'); //fs for file searching for Command Handeling
 const Discord = require('discord.js'); //requiring discord.js
 const { prefix, token } = require('./config.json'); //getting prefix and token
 const client = new Discord.Client({ disableEveryone: false }); //new client
-client.commands = new Discord.Collection(); //fetching commans
-const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js')); //getting misc commands
-for (const file of commandFiles) {
-	const command = require(`./Commands/${file}`);
-	client.commands.set(command.name, command);
-} //making them into commands
 
-const commandFilesTwo = fs.readdirSync('./Commands/Music').filter(file => file.endsWith('.js')) //getting music commands
-for (const file of commandFilesTwo) {
-	const command = require(`./Commands/Music/${file}`);
-	client.commands.set(command.name, command);
-} //making them into commands
+//Command handeling system
+client.commands = new Discord.Collection();
+const commandFolders = fs.readdirSync('./Commands');
+const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
+
+
+//getting the actual files and making them into commands
+for (const folder of commandFolders) {
+	const commandFiles = fs.readdirSync(`./Commands/${folder}`).filter(file => file.endsWith('.js'));
+	for (const file of commandFiles) {
+		const command = require(`./Commands/${folder}/${file}`);
+		client.commands.set(command.name, command);
+	}
+}
+
 
 
 client.once('ready', async () => {
 	console.log('Ready!');
-  const status = [
-    "Prefix is `~`",
-    "I'm POG",
-    "I don't know what to put here :eyes:",
-    "Minecraft",
-    "Terraria",
-    "Busy being a good bot :D"
-  ]
-  let index = 0
-  setInterval(() => {
-    if (index === status.length) index = 0
-    const status2 = status[index]
-    client.user.setActivity(status2, { type:"PLAYING"}).catch(console.error)
-    index++
-  }, 2500)
+    //Setting the status
+    client.user.setActivity("New Help Command System!", { type:"PLAYING"}).catch(console.error)
+    //Slash Commands system
 const getApp = (guildId) => {
     const app = client.api.applications(client.user.id)
     if (guildId) {
@@ -130,17 +124,18 @@ const createAPIMessage = async (interaction, content) => {
 // Initialize the invite cache
 const invites = {};
 
-// A pretty useful method to create a delay without blocking the whole script.
+
 const wait = require('util').promisify(setTimeout);
 
-
+//More command handeling stuff
 client.on('message', message => {
 
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
-	const command = args.shift().toLowerCase();
 
+	const command = args.shift().toLowerCase();
+  
 	if (!client.commands.has(command)) return;
 
 	try {
@@ -159,6 +154,9 @@ client.on('message', message => {
 
 
 client.login(token);
+
+
+//MUSIC
 const ytdl = require('ytdl-core')
 const { Util } = require('discord.js')
 const queue = new Map()
@@ -288,19 +286,15 @@ async function play(guild, song, Channel) {
     serverQueue.textChannel.send(`Started playing: **${song.title}***`)
 
 }
+
+
+//Starting a server for a bot to ping to keep this bot online
 var http = require('http');
 http.createServer(function (req, res) {
   res.write("I'm alive");
   res.end();
 }).listen(8080);
-client.once('ready', async () =>{
-    const getApp = (guildId) => {
-    const app = client.api.applications(client.user.id)
-    if (guildId) {
-      app.guilds(guildId)
-    }
-    return app
-  }
-  const guildId = "814609294032633896"
-  
-console.log("pogged")})
+
+client.on('error', error => {
+  console.log(error)
+})
