@@ -1,11 +1,12 @@
 
 //Getting some basic Requires for plugins
+const { prefix, token, youtubeAPI } = require('./config.json');
 const YouTube = require("discord-youtube-api");
 const youtube = new YouTube
-("AIzaSyA25eGUqxnjbAEEtPjx-plIA7m6raoBTPQ"); //API code
+(youtubeAPI); //API code
 const fs = require('fs'); //fs for file searching for Command Handeling
 const Discord = require('discord.js'); //requiring discord.js
-const { prefix, token } = require('./config.json'); //getting prefix and token
+ //getting prefix and token
 const client = new Discord.Client({ disableEveryone: false }); //new client
 
 //Command handeling system
@@ -294,7 +295,3 @@ http.createServer(function (req, res) {
   res.write("I'm alive");
   res.end();
 }).listen(8080);
-
-client.on('error', error => {
-  console.log(error)
-})
