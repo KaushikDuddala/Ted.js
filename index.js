@@ -1,20 +1,25 @@
-const YouTube = require("discord-youtube-api");
+const YouTube = require("discord-youtube-api"); //Api for searching youtube
 const youtube = new YouTube
-("AIzaSyA25eGUqxnjbAEEtPjx-plIA7m6raoBTPQ");
-const channel = 814884952599953459;
-const fs = require('fs');
-const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
-const StatusUpdater = require('@tmware/status-rotate')
-const client = new Discord.Client({ disableEveryone: false });
-client.commands = new Discord.Collection();
-const fetch = require('node-fetch')
-const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
+("AIzaSyA25eGUqxnjbAEEtPjx-plIA7m6raoBTPQ"); //API code
+const fs = require('fs'); //fs for file searching for Command Handeling
+const Discord = require('discord.js'); //requiring discord.js
+const { prefix, token } = require('./config.json'); //getting prefix and token
+const client = new Discord.Client({ disableEveryone: false }); //new client
+client.commands = new Discord.Collection(); //fetching commans
+const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js')); //getting misc commands
 for (const file of commandFiles) {
 	const command = require(`./Commands/${file}`);
 	client.commands.set(command.name, command);
-}
-client.once('ready', () => {
+} //making them into commands
+
+const commandFilesTwo = fs.readdirSync('./Commands/Music').filter(file => file.endsWith('.js')) //getting music commands
+for (const file of commandFilesTwo) {
+	const command = require(`./Commands/Music/${file}`);
+	client.commands.set(command.name, command);
+} //making them into commands
+
+
+client.once('ready', async () => {
 	console.log('Ready!');
   const status = [
     "Prefix is `~`",
@@ -31,7 +36,97 @@ client.once('ready', () => {
     client.user.setActivity(status2, { type:"PLAYING"}).catch(console.error)
     index++
   }, 2500)
-});
+const getApp = (guildId) => {
+    const app = client.api.applications(client.user.id)
+    if (guildId) {
+      app.guilds(guildId)
+    }
+    return app
+  }
+  const guildId = "814609294032633896"
+  const commands = await getApp(guildId).commands.get()
+  console.log(commands)
+await getApp(guildId).commands.post({ 
+  data:{
+  name: "ping",
+  description:"simple ping pong command",
+  }
+})
+await getApp(guildId).commands.post({
+  data:{
+    name:"embed",
+    description:"Makes a embed based on the inputs",
+    options:[
+      {
+        name: "title",
+        description:"title of the embed you want to send",
+        required:true,
+        type: 3
+      },
+      {
+        name:"content",
+        description:"content of the embed you want to send",
+        required:true,
+        type:3
+      }
+    ]
+  }
+})
+  
+
+  client.ws.on('INTERACTION_CREATE', async (interaction) =>{
+    const { name, options } = interaction.data
+    const command = name.toLowerCase()
+
+    const args = {}
+
+    console.log(options)
+
+    if (options) {
+      for (const option of options){
+        const { name, value } = option
+        args[name] = value
+      }
+    }
+    console.log(args)
+    console.log(command)
+    if(command == "ping"){
+      reply(interaction, "Pong!")
+    }else if(command == "embed"){
+      console.log(args.title)
+      const NewEmbed = new Discord.MessageEmbed()
+      .setTitle(args.title)
+      .setDescription(args.content)
+      .setColor()
+      reply(interaction, NewEmbed)
+    }
+
+  })
+})
+const reply = async (interaction, response) => {
+  let data = {
+    content:response
+  }
+  if (typeof response === "object"){
+    data = await createAPIMessage(interaction, response)
+  }
+        client.api.interactions(interaction.id, interaction.token).callback.post({
+        data:{
+          type:4,
+          data,
+        },
+      })
+}
+const createAPIMessage = async (interaction, content) => {
+  const { data, files } = await Discord.APIMessage.create(
+    client.channels.resolve(interaction.channel_id),
+    content
+  )
+  .resolveData()
+  .resolveFiles()
+
+  return { ...data, files }
+}
 // Initialize the invite cache
 const invites = {};
 
@@ -56,6 +151,13 @@ client.on('message', message => {
 	}
 });
 
+
+ 
+
+
+
+
+
 client.login(token);
 const ytdl = require('ytdl-core')
 const { Util } = require('discord.js')
@@ -67,6 +169,9 @@ client.on('message', async message =>{
 
   const args = message.content.substring(prefix.length).split(" ")
   const serverQueue = queue.get(message.guild.id)
+
+
+
 
   if(message.content.startsWith(`${prefix}play`)){
     const voiceChannel = message.member.voice.channel
@@ -188,3 +293,14 @@ http.createServer(function (req, res) {
   res.write("I'm alive");
   res.end();
 }).listen(8080);
+client.once('ready', async () =>{
+    const getApp = (guildId) => {
+    const app = client.api.applications(client.user.id)
+    if (guildId) {
+      app.guilds(guildId)
+    }
+    return app
+  }
+  const guildId = "814609294032633896"
+  
+console.log("pogged")})

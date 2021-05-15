@@ -1,13 +1,45 @@
-const Discord = require('discord.js')
+const prefix = "~"
+
 module.exports = {
 	name: 'help',
-	description: 'List of commands',
+	description: 'List all of my commands or info about a specific command.',
+	aliases: ['commands'],
+	usage: '[command name]',
+	cooldown: 5,
 	execute(message, args) {
-    const helpMessage = new Discord.MessageEmbed()
-	.setColor('RANDOM')
-	.setTitle('Command List')
-	.setDescription('These are the commands developed so far \n 1. ~trivia Usage: `~trivia` Description: Play trivia with this command! \n 2. ~ping Usage: `~ping` Description: Pings the bot and the bot replies with "Pong." \n 3. ~clearchat Usage: `~clearchat [Number of messages]` Example: `~clearchat 10` Description: Deletes a certain amount of messages \n 4. ~Ban Usage: `~ban <User>` (Ping them in <user>) example `~ban @TED` Description Bans a pinged User \n 5. ~kahootFlood, usage: ~kahootFlood <Number Of Bots> <Game Pin>, Example: ~kahootFlood 100 123456, Description: Floods a kahoot game with bots \n 6. ~Noobify, Usage: ~Noobify, Description: Decides if you are a noob.... \n 7. ~Play, usage: ~play <song>, example: ~play Bad!, Description: Plays a song. \n 8. ~stop, description: Stops music and exits the voice channel, \n 9. ~pause, description: Pauses music, use ~unpause to continue, \n 10. ~unpause, description: Unpauses previously paused music \n 11. ~queue, description: Shows the current queue \n 12. ~np description: Shows the currently Playing song.')
+				const data = [];
+		const { commands } = message.client;
 
-message.channel.send(helpMessage);
+		if (!args.length) {
+				data.push('Here\'s a list of all my commands:');
+	data.push(commands.map(command => command.name).join(', '));
+	data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
+
+	return message.author.send(data, { split: true })
+		.then(() => {
+			if (message.channel.type === 'dm') return;
+			message.reply('I\'ve sent you a DM with all my commands!');
+		})
+		.catch(error => {
+			console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
+			message.reply('it seems like I can\'t DM you! Do you have DMs disabled?');
+		});
+		} 
+    const name = args[0].toLowerCase();
+const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
+
+if (!command) {
+	return message.reply('that\'s not a valid command!');
+}
+
+data.push(`**Name:** ${command.name}`);
+
+if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
+if (command.description) data.push(`**Description:** ${command.description}`);
+if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
+
+data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
+
+message.channel.send(data, { split: true });
 	},
 };

@@ -1,6 +1,9 @@
 module.exports = {
   name: "kahootflood",
+  description: "Floods a kahoot game with bots",
+  usage: "~kahootflood <number of bots> <game pin>",
   args: true,
+  cooldown: 10,
   execute(message, args) {
     console.log("Loading...")
 //requires
@@ -20,7 +23,13 @@ setTitle('Kahoot-Bot-Spammer');
 var beep = require('beepbeep')
 console.log("Required beepbeep")
 //setting input variables
+function say(messgae, channel, content){
+  console.log(content)
+  message.channel.send(content)
+}
 antibotmode = "no"
+if (!args[0]) return say(message, channel, "brah dont spam or maybe wrong usage lol make sure to put arguments into it, do ~help kahootflood if you are confused");
+if (!args[1]) return say(message, channel, "brah dont spam or maybe wrong usage lol make sure to put arguments into it, do ~help kahootflood if you are confused");
 bots = args[0]
 pin = args[1]
 

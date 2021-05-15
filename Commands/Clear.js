@@ -1,9 +1,11 @@
 module.exports = {
   name: "clear",
-  description: "clears Chat",
+  description: "clears Chat messages",
+  aliases: ["purge", "clearchat"],
+  usage: "~clear [number of messages]",
   execute(message, args) {
     var yes = message.content
-    var no = yes.includes("~clearchat")
+    var no = yes.includes("~clear")
     let args2 = message.content.split(' ');
     if (no === true) {
       if (message.member.hasPermission('MANAGE_MESSAGES')) {

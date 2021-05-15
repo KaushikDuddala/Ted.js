@@ -1,5 +1,6 @@
 module.exports = {
   name: "kill",
+  description: "kills a user with a random kill message",
   cooldown: 10,
   usage: 'kill <user>',
   args: true,

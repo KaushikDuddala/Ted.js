@@ -1,5 +1,8 @@
 module.exports = {
   name: "sus",
+  description:"says if a user are suspicous or not :)",
+  cooldown:10,
+  usage:"~sus or ~sus <user>",
   args: true,
   execute(message, args) {
     const random = (min = 0, max = 50) => {

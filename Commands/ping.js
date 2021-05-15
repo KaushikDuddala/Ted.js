@@ -1,9 +1,10 @@
 module.exports = {
-	name: 'invite',
-	description: 'bot invite!',
+	name: 'ping',
+	description: 'Pings the bot, replys with Pong!',
+  usage: "~ping",
   cooldown: 10,
 	execute(message, args) {
-		message.channel.send('https://discord.com/api/oauth2/authorize?client_id=821785135875358791&permissions=8&scope=bot');
+		message.channel.send('Pong!');
     console.log("Pong.")
 	},
 };

@@ -1,5 +1,8 @@
 module.exports = {
   name: "noobify",
+  description: "Says if you are a noob or not :)",
+  usage: "~noobify",
+  cooldown:10,
   args: true,
   execute(message, args) {
     const random = (min = 0, max = 50) => {

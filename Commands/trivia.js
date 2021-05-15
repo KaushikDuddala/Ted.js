@@ -1,6 +1,9 @@
 module.exports = {
 	name: 'trivia',
 	description: 'Play Trivia!',
+  cooldown:10,
+  args:false,
+  usage:"~trivia",
 	execute(message, args) {
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
