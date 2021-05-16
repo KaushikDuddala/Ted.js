@@ -67,7 +67,7 @@ await getApp(guildId).commands.post({
     ]
   }
 })
-  
+
 
   client.ws.on('INTERACTION_CREATE', async (interaction) =>{
     const { name, options } = interaction.data
