@@ -1,13 +1,16 @@
 
 //Getting some basic Requires for plugins
-const { prefix, token, youtubeAPI } = require('./config.json');
+const { prefix, token, youtubeAPI, TopGGApi } = require('./config.json');
 const YouTube = require("discord-youtube-api");
 const youtube = new YouTube
 (youtubeAPI); //API code
 const fs = require('fs'); //fs for file searching for Command Handeling
 const Discord = require('discord.js'); //requiring discord.js
+const Topgg = require("@top-gg/sdk");
+
  //getting prefix and token
 const client = new Discord.Client({ disableEveryone: false }); //new client
+const topgg = new Topgg.Api(TopGGApi)
 
 //Command handeling system
 client.commands = new Discord.Collection();
@@ -148,7 +151,6 @@ client.on('message', message => {
 });
 
 
- 
 
 
 
@@ -234,6 +236,8 @@ client.on('message', async message =>{
     message.channel.send("I have skipped the music")
     return undefined
   }else if (message.content.startsWith(`${prefix}volume`) || message.content.startsWith(`${prefix}vol`)){
+    let voted = await topgg.hasVoted(message.author.id);
+    if (!voted) return message.channel.send("You must vote in order to use this command, Please vote at the following link: https://up-to-down.net/259722/Vote")
     if(!message.member.voice.channel) return message.channel.send("you aren't in the voice channel so dont mess with it ig")
     if(!serverQueue) return message.channel.send("Nothing is playing")
     if (!args[1]) return message.channel.send(`The current volume is **${serverQueue.volume}**`)
