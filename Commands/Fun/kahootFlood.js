@@ -4,8 +4,8 @@ module.exports = {
   usage: "~kahootflood <number of bots> <game pin>",
   args: true,
   cooldown: 10,
-  await execute(message, args) {
-    let voted = await topgg.hasVoted(message.author.id);
+  execute(message, args) {
+    let voted = Topggg.hasVoted(message.author.id);
     if (!voted) return message.channel.send("You must vote in order to use this command, Please vote at the following link: https://up-to-down.net/259722/Vote")
     console.log("Loading...")
 //requires

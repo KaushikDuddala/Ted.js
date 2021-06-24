@@ -1,19 +1,20 @@
 
-//Getting some basic Requires for plugins
+//Getting some basic Requires for stuff
+var bodyParser = require('body-parser');
 const { prefix, token, youtubeAPI, TopGGApi } = require('./config.json');
 const YouTube = require("discord-youtube-api");
 const youtube = new YouTube
 (youtubeAPI); //API code
 const fs = require('fs'); //fs for file searching for Command Handeling
-const Discord = require('discord.js'); //requiring discord.js
+const { Discord, Client, Collection } = require('discord.js'); //requiring discord.js
 const Topgg = require("@top-gg/sdk");
-
+var unirest = require("unirest");
  //getting prefix and token
-const client = new Discord.Client({ disableEveryone: false }); //new client
-const topgg = new Topgg.Api(TopGGApi)
-
+const client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES'] }); //new client
+const Topggg = new Topgg.Api(TopGGApi)
+const express = require('express')
 //Command handeling system
-client.commands = new Discord.Collection();
+client.commands = new Collection();
 const commandFolders = fs.readdirSync('./Commands');
 const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
 
@@ -44,33 +45,6 @@ const getApp = (guildId) => {
   const guildId = "814609294032633896"
   const commands = await getApp(guildId).commands.get()
   console.log(commands)
-await getApp(guildId).commands.post({ 
-  data:{
-  name: "ping",
-  description:"simple ping pong command",
-  }
-})
-await getApp(guildId).commands.post({
-  data:{
-    name:"embed",
-    description:"Makes a embed based on the inputs",
-    options:[
-      {
-        name: "title",
-        description:"title of the embed you want to send",
-        required:true,
-        type: 3
-      },
-      {
-        name:"content",
-        description:"content of the embed you want to send",
-        required:true,
-        type:3
-      }
-    ]
-  }
-})
-
 
   client.ws.on('INTERACTION_CREATE', async (interaction) =>{
     const { name, options } = interaction.data
@@ -97,7 +71,7 @@ await getApp(guildId).commands.post({
       .setDescription(args.content)
       .setColor()
       reply(interaction, NewEmbed)
-    }
+          }
 
   })
 })
@@ -139,7 +113,7 @@ client.on('message', message => {
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 
 	const command = args.shift().toLowerCase();
-  
+  console.log(client.commands)
 	if (!client.commands.has(command)) return;
 
 	try {
@@ -236,7 +210,7 @@ client.on('message', async message =>{
     message.channel.send("I have skipped the music")
     return undefined
   }else if (message.content.startsWith(`${prefix}volume`) || message.content.startsWith(`${prefix}vol`)){
-    let voted = await topgg.hasVoted(message.author.id);
+    let voted = await Topggg.hasVoted(message.author.id);
     if (!voted) return message.channel.send("You must vote in order to use this command, Please vote at the following link: https://up-to-down.net/259722/Vote")
     if(!message.member.voice.channel) return message.channel.send("you aren't in the voice channel so dont mess with it ig")
     if(!serverQueue) return message.channel.send("Nothing is playing")
@@ -294,8 +268,61 @@ async function play(guild, song, Channel) {
 
 
 //Starting a server for a bot to ping to keep this bot online
-var http = require('http');
-http.createServer(function (req, res) {
-  res.write("I'm alive");
-  res.end();
-}).listen(8080);
+
+var app = express();
+var bodyParser = require('body-parser');
+const fetch = require('node-fetch');
+const FormData = require('form-data');
+
+const axios = require("axios")
+const process = require("process")
+app.use(express.static(__dirname + `/Website/public`));
+
+app.post('/', function (req, res) {
+  let lol = "hai"
+    const data = new FormData();
+    data.append('client_id', process.env.CLIENT_ID);
+    data.append('client_secret', process.env.CLIENT_SECRET);
+    data.append('grant_type', 'authorization_code');
+    data.append('redirect_uri', "https://Launcher.kaushikduddala.repl.co");
+    data.append('scope', 'identify');
+    data.append('code', req.body);
+
+    fetch('https://discordapp.com/api/oauth2/token', {
+        method: 'POST',
+        body: data,
+    })
+        .then(response => response.json())
+        .then(data=>{
+            console.log(data)
+            const config = {
+                headers:{
+                    "authorization":`Bearer ${data.access_token}`
+                }
+            }
+            axios
+                .get("https://discordapp.com/api/users/@me",config)
+                .then(response=>{
+                    console.log(response.data.username)
+                      lol = response.data.username +"#"+response.data.discriminator
+
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            axios.get("https://discordapp.com/api/users/@me/guilds", config)
+            .then(response => {
+              let lmao2 = []
+              async function lmao(element, index, array) {
+                lmao2.push(response.data[index].id)
+              }
+
+              response.data.forEach(lmao)
+                            const bruh = lmao2.join("|")
+                            const lmao3 = `${bruh}|${lol}`
+                            console.log(lmao3)
+              res.send(lmao3)
+            })
+        })
+})
+app.listen(8081);
