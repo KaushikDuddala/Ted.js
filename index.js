@@ -32,48 +32,6 @@ for (const folder of commandFolders) {
 
 client.once('ready', async () => {
 	console.log('Ready!');
-    //Setting the status
-    client.user.setActivity("New Help Command System!", { type:"PLAYING"}).catch(console.error)
-    //Slash Commands system
-const getApp = (guildId) => {
-    const app = client.api.applications(client.user.id)
-    if (guildId) {
-      app.guilds(guildId)
-    }
-    return app
-  }
-  const guildId = "814609294032633896"
-  const commands = await getApp(guildId).commands.get()
-  console.log(commands)
-
-  client.ws.on('INTERACTION_CREATE', async (interaction) =>{
-    const { name, options } = interaction.data
-    const command = name.toLowerCase()
-
-    const args = {}
-
-    console.log(options)
-
-    if (options) {
-      for (const option of options){
-        const { name, value } = option
-        args[name] = value
-      }
-    }
-    console.log(args)
-    console.log(command)
-    if(command == "ping"){
-      reply(interaction, "Pong!")
-    }else if(command == "embed"){
-      console.log(args.title)
-      const NewEmbed = new Discord.MessageEmbed()
-      .setTitle(args.title)
-      .setDescription(args.content)
-      .setColor()
-      reply(interaction, NewEmbed)
-          }
-
-  })
 })
 const reply = async (interaction, response) => {
   let data = {
@@ -125,7 +83,18 @@ client.on('message', message => {
 });
 
 
+client.on('message', async message => {
 
+	if (message.content.toLowerCase() === '!deploy' && message.author.id === "747462192802168852") {
+		const data = {
+			name: 'ping',
+			description: 'Replies with Pong!',
+		};
+
+		const command = await client.application.commands.create(data);
+		console.log(command);
+	}
+});
 
 
 
