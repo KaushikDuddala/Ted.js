@@ -30,8 +30,7 @@ function say(messgae, channel, content){
   message.channel.send(content)
 }
 antibotmode = "no"
-if (!args[0]) return say(message, channel, "brah dont spam or maybe wrong usage lol make sure to put arguments into it, do ~help kahootflood if you are confused");
-if (!args[1]) return say(message, channel, "brah dont spam or maybe wrong usage lol make sure to put arguments into it, do ~help kahootflood if you are confused");
+if (!args[0] || !args[1]) return say(message, channel, "brah dont spam or maybe wrong usage lol make sure to put arguments into it, do ~help kahootflood if you are confused");
 bots = args[0]
 pin = args[1]
 

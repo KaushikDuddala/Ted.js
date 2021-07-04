@@ -1,1 +1,0 @@
-run = "npx node@14 index.js"

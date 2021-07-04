@@ -1,19 +1,17 @@
-
 //Getting some basic Requires for stuff
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const { prefix, token, youtubeAPI, TopGGApi } = require('./config.json');
 const YouTube = require("discord-youtube-api");
-const youtube = new YouTube
-(youtubeAPI); //API code
-const fs = require('fs'); //fs for file searching for Command Handeling
-const { Discord, Client, Collection } = require('discord.js'); //requiring discord.js
+const youtube = new YouTube(youtubeAPI);
+const fs = require('fs');
+const { Discord, Client, Collection } = require('discord.js');
 const Topgg = require("@top-gg/sdk");
 var unirest = require("unirest");
- //getting prefix and token
-const client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES'] }); //new client
+const client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES'] });
 const Topggg = new Topgg.Api(TopGGApi)
 const express = require('express')
-//Command handeling system
+
+//Command handling system
 client.commands = new Collection();
 const commandFolders = fs.readdirSync('./Commands');
 const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
@@ -28,40 +26,10 @@ for (const folder of commandFolders) {
 	}
 }
 
-
-
 client.once('ready', async () => {
 	console.log('Ready!');
 })
-const reply = async (interaction, response) => {
-  let data = {
-    content:response
-  }
-  if (typeof response === "object"){
-    data = await createAPIMessage(interaction, response)
-  }
-        client.api.interactions(interaction.id, interaction.token).callback.post({
-        data:{
-          type:4,
-          data,
-        },
-      })
-}
-const createAPIMessage = async (interaction, content) => {
-  const { data, files } = await Discord.APIMessage.create(
-    client.channels.resolve(interaction.channel_id),
-    content
-  )
-  .resolveData()
-  .resolveFiles()
 
-  return { ...data, files }
-}
-// Initialize the invite cache
-const invites = {};
-
-
-const wait = require('util').promisify(setTimeout);
 
 //More command handeling stuff
 client.on('message', message => {
@@ -81,24 +49,24 @@ client.on('message', message => {
 	}
 });
 
+async function createSlashCommand(element, array, index) {
+  await client.application.commands.create(element)
+}
 
 client.on('message', async message => {
 
 	if (message.content.toLowerCase() === '!deploy' && message.author.id === "747462192802168852") {
-		const data = {
-			name: 'ping',
-			description: 'Replies with Pong!',
-		};
-
-		const command = await client.application.commands.create(data);
+    const commands = [
+      {
+        name: 'ping',
+        description: 'Replies with Pong!'
+      },
+    ]
+    commands.forEach(createSlashCommand)
 	}
 });
 
-
-
-
 client.login(token);
-
 
 //MUSIC
 const ytdl = require('ytdl-core')
@@ -112,9 +80,6 @@ client.on('message', async message =>{
   const args = message.content.substring(prefix.length).split(" ")
   const serverQueue = queue.get(message.guild.id)
 
-
-
-
   if(message.content.startsWith(`${prefix}play`)){
     const voiceChannel = message.member.voice.channel
     if(!voiceChannel){
@@ -123,9 +88,7 @@ client.on('message', async message =>{
     const permissions = voiceChannel.permissionsFor(message.client.user)
     if(!permissions.has('CONNECT')) return message.channel.send("Bruh i dont have permission to connect :/")
     if(!permissions.has("SPEAK")) return message.channel.send("I can join but i dont have permissions to speak in the vc bruh")
-    console.log(args)
     args.shift();
-    console.log(args)
     const lmaoSong2 = args.join(" ")
     const songInfo = await youtube.searchVideos(lmaoSong2);
     const song = {
@@ -242,7 +205,8 @@ const fetch = require('node-fetch');
 const FormData = require('form-data');
 
 const axios = require("axios")
-const process = require("process")
+const process = require("process");
+const { commands } = require('npm');
 app.use(express.static(__dirname + `/Website/public`));
 
 app.post('/', function (req, res) {
