@@ -22,16 +22,16 @@ function main(){
     if ( num % 2 == 0) {
         message.channel.send(trivia[num])
         message.channel.send("React to the answer choice you choose in the message in which you said ~trivia!")
-        message.react('🇦').then(() => message.react('🇧'));
-        message.react('🇨').then(() => message.react('🇩'));
+        message.react('🇦').then(() => message.react('🇧').then(() => message.react('🇨').then(() => message.react('🇩'))))
         const filter = (reaction, user) => {
-	        return ['🇦', '🇧', '🇨', '🇩'].includes(reaction.emoji.name) && user.id === message.author.id;
+          console.log(user.id + " " + message.author.id)
+	        return ['🇦', '🇧', '🇨', '🇩'].includes(reaction.emoji.name) && user.id == message.author.id
         };
 
-        message.awaitReactions(filter, { max: 1, time: 60000, errors: ['time'] })
+        message.awaitReactions({ filter, max: 999, time: 60000, errors: ['time'] })
 	    .then(collected => {    
 		const reaction = collected.first();
-
+    console.log(reaction)
 		if (reaction.emoji.name === '🇦') {
 			if (trivia[num + 1] === 'A'){
                 message.channel.send('someone knows their facts! !')
@@ -47,16 +47,18 @@ function main(){
             }
         }else if (reaction.emoji.name === '🇨')   {
             if (trivia[num + 1] == "C") {
-                message.channel.send("someone knows their facts! !")
+                message.channel.send("someone knows their facts!")
             }else {
                 message.channel.send("Oof thats wrong.")
             }
         }else if (reaction.emoji.name === '🇩'){
             if (trivia[num+1] == "D"){
-                message.channel.send("someone knows their facts! !")
+                message.channel.send("someone knows their facts!")
             }else { 
                 message.channel.send("Oof thats wrong.")
             }
+        }else{
+          message.channel.send(`ummmmmm i got a error saying that you used a invalid reaction.. the reaction was ${reaction}`)
         }
 	})
 	.catch(collected => {

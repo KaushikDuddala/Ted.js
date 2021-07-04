@@ -5,6 +5,6 @@ module.exports = {
   cooldown: 10,
 	execute(message, args) {
 		message.channel.send('Pong!');
-    console.log("Pong.")
+    console.log(`Pong to ${message.author.tag}`)
 	},
 };

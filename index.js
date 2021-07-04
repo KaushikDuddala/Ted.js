@@ -71,7 +71,6 @@ client.on('message', message => {
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 
 	const command = args.shift().toLowerCase();
-  console.log(client.commands)
 	if (!client.commands.has(command)) return;
 
 	try {
@@ -92,7 +91,6 @@ client.on('message', async message => {
 		};
 
 		const command = await client.application.commands.create(data);
-		console.log(command);
 	}
 });
 
