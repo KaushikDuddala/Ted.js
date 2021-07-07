@@ -1,5 +1,5 @@
 //Getting some basic Requires for stuff
-const bodyParser = require('body-parser');
+const nodemon = require('nodemon')
 const { prefix, token, youtubeAPI, TopGGApi } = require('./config.json');
 const YouTube = require("discord-youtube-api");
 const youtube = new YouTube(youtubeAPI);
@@ -200,7 +200,6 @@ async function play(guild, song, Channel) {
 //Starting a server for a bot to ping to keep this bot online
 
 var app = express();
-var bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const FormData = require('form-data');
 
