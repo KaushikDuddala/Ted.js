@@ -232,7 +232,7 @@ module.exports = {
                             },
                         ])
                     interaction.edit({ content:question.question, components:[[optionsDropDown]] })
-                    message.channel.awaitMessageComponent({ filterForQuestions, time: 60000 })
+                    await message.channel.awaitMessageComponent({ filterForQuestions, time: 60000 })
                     .then(i => {
                         if(i.values[0] == question.correct_answer){
                             i.update({ content:"Correct!", components:[] })
@@ -261,7 +261,7 @@ module.exports = {
                             }
                         ]) 
                     interaction.edit({ content:question.question, components:[[optionsDropDown]] })
-                    message.channel.awaitMessageComponent({ filterForQuestions, time: 60000 })
+                    await message.channel.awaitMessageComponent({ filterForQuestions, time: 60000 })
                     .then(i => {
                         if(i.values[0] == question.correct_answer){
                             i.update({ content:"Correct!", components:[] })
@@ -324,18 +324,16 @@ module.exports = {
                     const thingy = await message.channel.send({ content:"Starting!" })
                     let i = 0
                     let man = "wait"
+                    let array = []
+                    for(i=0;i<=questionCount;i++) {
+                        array.push("hi")
+                    }
                     if (questionCount == 1) {
                         startGame(thingy, i, questionCount)
                     }else{
-                        async function LOL() {
-                            await startGame(thingy, i, questionCount)
-                            await waitForFinish(man, "done")
-                            man = "wait"
-                            console.log("LOL")
+                        for await (thing of array) {
+                            startGame(thingy, i, questionCount)
                         }
-                        LOL()
-                        LOL()
-                        
                     }
                 }
             }
