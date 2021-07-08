@@ -1,5 +1,3 @@
-const { discordSort } = require('discord.js/src/util/Util');
-
 module.exports = {
     name: 'trivia',
     description: 'Play Trivia!',
@@ -9,6 +7,7 @@ module.exports = {
     execute(message, args) {     
         async function main(message, args) {
             const { MessageActionRow, MessageSelectMenu, MessageEmbed, MessageButton } = require('discord.js');
+            const fetch = require('node-fetch')
             const Questions = new MessageSelectMenu()
             .setCustomId('Questions')
             .setPlaceholder('How Many Questions?')
@@ -16,52 +15,52 @@ module.exports = {
                 {
                     label:'1',
                     description:"1 Question.",
-                    value:"?amount=1"
+                    value:"1"
                 },
                 {
                     label:'2',
                     description:"2 Questions.",
-                    value:"?amount=2"
+                    value:"2"
                 },
                 {
                     label:'3',
                     description:"3 Questions.",
-                    value:"?amount=3"
+                    value:"3"
                 },
                 {
                     label:'4',
                     description:"4 Questions.",
-                    value:"?amount=4"
+                    value:"4"
                 },
                 {
                     label:'5',
                     description:"5 Questions.",
-                    value:"?amount=5"
+                    value:"5"
                 },
                 {
                     label:'6',
                     description:"6 Questions.",
-                    value:"?amount=6"
+                    value:"6"
                 },
                 {
                     label:'7',
                     description:"7 Questions.",
-                    value:"?amount=7"
+                    value:"7"
                 },
                 {
                     label:'8',
                     description:"8 Question.",
-                    value:"?amount=8"
+                    value:"8"
                 },
                 {
                     label:'9',
                     description:"9 Question.",
-                    value:"?amount=9"
+                    value:"9"
                 },
                 {
                     label:'10',
                     description:"10 Question.",
-                    value:"?amount=10"
+                    value:"10"
                 }
             ])
             const Difficulty = new MessageSelectMenu().setCustomId('Difficulty').setPlaceholder('Which difficulty would you like?').addOptions([
@@ -164,26 +163,135 @@ module.exports = {
                 }
             ])
             const startButton = new MessageButton()
+                .setCustomId("startButton")
+                .setLabel("Start!")
+                .setStyle("PRIMARY")
+            const startButtonDisabled = new MessageButton()
+                .setCustomId("startButtonDisabled")
+                .setLabel("Start!")
+                .setStyle("PRIMARY")
+                .setDisabled(true)
             message.channel.send({content: "How many questions would you like? 1-10.", components: [[Questions]]})
-            console.log("BRUV")
+            /* Randomize array in-place using Durstenfeld shuffle algorithm */
+            async function shuffleArray(array) {
+                for (var i = array.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
+                }
+                return array
+            }
+            async function waitForFinish(valueToCheck, futureValue) {
+                if(valueToCheck == futureValue) {
+                    return "done"
+                }else{
+                    setTimeout(function(){
+                        waitForFinish(valueToCheck, futureValue)
+                    }, 50)
+                }
+            }
+            async function startGame(interaction, counter, questionCount){
+                await fetch(path).then(response => response.json()).then(response => responseGlobal = response)
+                if (!responseGlobal.response_code == 0) return interaction.update(`I had an error while getting the questions, error code: ${responseGlobal.response_code}, please report this to Launch.vbs#9999`)
+                if (questionCount == NaN) return interaction.update("I had an error while getting the question count.")
+                const question = responseGlobal.results[0]
+                const answers = await question.incorrect_answers.push(question.correct_answer)
+                const shuffledAnswers = shuffleArray(question.incorrect_answers)
+                console.log(question)
+                if (question.type == "multiple"){
+                    console.log(shuffledAnswers)
+                    console.log(question.incorrect_answers)
+                    if (question.incorrect_answers[0].length > 25) return startGame(interaction, counter, questionCount)
+                    if (question.incorrect_answers[1].length > 25) return startGame(interaction, counter, questionCount)
+                    if (question.incorrect_answers[2].length > 25) return startGame(interaction, counter, questionCount)
+                    if (question.incorrect_answers[3].length > 25) return startGame(interaction, counter, questionCount)
+                    const optionsDropDown = new MessageSelectMenu()
+                        .setCustomId("Answer")
+                        .setPlaceholder("Pick your answer here!")
+                        .addOptions([
+                            {
+                                label:question.incorrect_answers[0],
+                                description:question.incorrect_answers[0],
+                                value:question.incorrect_answers[0]
+                            },
+                            {
+                                label:question.incorrect_answers[1],
+                                description:question.incorrect_answers[1],
+                                value:question.incorrect_answers[1]
+                            },
+                            {
+                                label:question.incorrect_answers[2],
+                                description:question.incorrect_answers[2],
+                                value:question.incorrect_answers[2]
+                            },
+                            {
+                                label:question.incorrect_answers[3],
+                                description:question.incorrect_answers[3],
+                                value:question.incorrect_answers[3]
+                            },
+                        ])
+                    interaction.edit({ content:question.question, components:[[optionsDropDown]] })
+                    message.channel.awaitMessageComponent({ filterForQuestions, time: 60000 })
+                    .then(i => {
+                        if(i.values[0] == question.correct_answer){
+                            i.update({ content:"Correct!", components:[] })
+                        }else{
+                            i.update({ content:"Incorrect.", components:[] })
+                        }
+                        man = "done"
+                    })
+                    .catch(console.error)
+                }else if(question.type == 'boolean') {
+                    if (question.incorrect_answers[0].length > 25) return startGame(interaction, counter, questionCount)
+                    if (question.incorrect_answers[1].length > 25) return startGame(interaction, counter, questionCount)
+                    const optionsDropDown = new MessageSelectMenu()
+                        .setCustomId("Answer")
+                        .setPlaceholder("Pick your answer here!")
+                        .addOptions([
+                            {
+                                label:question.incorrect_answers[0],
+                                description:question.incorrect_answers[0],
+                                value:question.incorrect_answers[0]
+                            },
+                            {
+                                label:question.incorrect_answers[1],
+                                description:question.incorrect_answers[1],
+                                value:question.incorrect_answers[1]
+                            }
+                        ]) 
+                    interaction.edit({ content:question.question, components:[[optionsDropDown]] })
+                    message.channel.awaitMessageComponent({ filterForQuestions, time: 60000 })
+                    .then(i => {
+                        if(i.values[0] == question.correct_answer){
+                            i.update({ content:"Correct!", components:[] })
+                        }else{
+                            i.update({ content:"Incorrect.", components:[] })
+                        }
+                        man = "done"
+                    })
+                }
+            }
             let path = `https://opentdb.com/api.php`
+            let responseGlobal = ""
+            let questionCount = 0
             async function filterForQuestions(i) {
-                console.log(i)
                 return i.customId === 'Questions' && i.user.id === message.author.id;
             }
             async function filterForDifficulty(i) {
-                console.log(i)
                 return i.customId === 'Difficulty' && i.user.id === message.author.id
             }
             async function filterForCategory(i) {
-                console.log(i)
                 return i.customId === "Category" && i.user.id === message.author.id
             }
+            async function filterForStart(i) {
+                return i.customId === "startButton" && i.user.id === message.author.id
+            }
             async function update(content, component, interaction, value) {
-                console.log(interaction)
                 if(interaction.customId == 'Questions'){
                     interaction.update({ content: content, components: [[component]] })
-                    path = `${path}${value}`
+                    path = `${path}?amount=1`
+                    questionCount = interaction.values[0].match(/\d+/)[0]
                     message.channel.awaitMessageComponent({ filterForDifficulty, time:15000 })
                     .then(interaction2 => update("Which category would you like", Category1, interaction2, interaction2.values.join("")))
                     .catch(console.error)
@@ -205,7 +313,30 @@ module.exports = {
                         path = `${path}${value}`
                     } 
                     console.log(path)
-                    interaction.update({ components: [[startButton]] })
+                    interaction.update({ content:"_ _",components: [[startButton]] })
+                    interaction.channel.awaitMessageComponent({ filterForStart, time: 15000 })
+	                    .then(i => update("Starting!", "none", i, "none"))
+	                    .catch(console.error);
+                }else if (interaction.customId == "startButton") {
+                    interaction.update({ content:"_ _", components: [[startButtonDisabled]] })
+                    console.log(questionCount)
+                    console.log("BRU")
+                    const thingy = await message.channel.send({ content:"Starting!" })
+                    let i = 0
+                    let man = "wait"
+                    if (questionCount == 1) {
+                        startGame(thingy, i, questionCount)
+                    }else{
+                        async function LOL() {
+                            await startGame(thingy, i, questionCount)
+                            await waitForFinish(man, "done")
+                            man = "wait"
+                            console.log("LOL")
+                        }
+                        LOL()
+                        LOL()
+                        
+                    }
                 }
             }
             message.channel.awaitMessageComponent({ filterForQuestions, time: 15000 })
