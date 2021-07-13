@@ -200,59 +200,5 @@ async function play(guild, song, Channel) {
 //Starting a server for a bot to ping to keep this bot online
 
 var app = express();
-const fetch = require('node-fetch');
-const FormData = require('form-data');
-
-const axios = require("axios")
-const process = require("process");
-const { commands } = require('npm');
 app.use(express.static(__dirname + `/Website/public`));
-
-app.post('/', function (req, res) {
-  let lol = "hai"
-    const data = new FormData();
-    data.append('client_id', process.env.CLIENT_ID);
-    data.append('client_secret', process.env.CLIENT_SECRET);
-    data.append('grant_type', 'authorization_code');
-    data.append('redirect_uri', "https://Launcher.kaushikduddala.repl.co");
-    data.append('scope', 'identify');
-    data.append('code', req.body);
-
-    fetch('https://discordapp.com/api/oauth2/token', {
-        method: 'POST',
-        body: data,
-    })
-        .then(response => response.json())
-        .then(data=>{
-            console.log(data)
-            const config = {
-                headers:{
-                    "authorization":`Bearer ${data.access_token}`
-                }
-            }
-            axios
-                .get("https://discordapp.com/api/users/@me",config)
-                .then(response=>{
-                    console.log(response.data.username)
-                      lol = response.data.username +"#"+response.data.discriminator
-
-                })
-                .catch(error=>{
-                    console.log(error)
-                })
-            axios.get("https://discordapp.com/api/users/@me/guilds", config)
-            .then(response => {
-              let lmao2 = []
-              async function lmao(element, index, array) {
-                lmao2.push(response.data[index].id)
-              }
-
-              response.data.forEach(lmao)
-                            const bruh = lmao2.join("|")
-                            const lmao3 = `${bruh}|${lol}`
-                            console.log(lmao3)
-              res.send(lmao3)
-            })
-        })
-})
 app.listen(8081);
