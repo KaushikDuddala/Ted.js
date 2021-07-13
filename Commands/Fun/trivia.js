@@ -191,10 +191,10 @@ module.exports = {
                     }, 50)
                 }
             }
-            async function startGame(interaction, counter, questionCount){
+            async function startGame(message, counter, questionCount){
                 await fetch(path).then(response => response.json()).then(response => responseGlobal = response)
-                if (!responseGlobal.response_code == 0) return interaction.update(`I had an error while getting the questions, error code: ${responseGlobal.response_code}, please report this to Launch.vbs#9999`)
-                if (questionCount == NaN) return interaction.update("I had an error while getting the question count.")
+                if (!responseGlobal.response_code == 0) return message.edit(`I had an error while getting the questions, error code: ${responseGlobal.response_code}, please report this to Launch.vbs#9999`)
+                if (questionCount == NaN) return message.edit("I had an error while getting the question count.")
                 const question = responseGlobal.results[0]
                 const answers = await question.incorrect_answers.push(question.correct_answer)
                 const shuffledAnswers = shuffleArray(question.incorrect_answers)
@@ -202,10 +202,10 @@ module.exports = {
                 if (question.type == "multiple"){
                     console.log(shuffledAnswers)
                     console.log(question.incorrect_answers)
-                    if (question.incorrect_answers[0].length > 25) return startGame(interaction, counter, questionCount)
-                    if (question.incorrect_answers[1].length > 25) return startGame(interaction, counter, questionCount)
-                    if (question.incorrect_answers[2].length > 25) return startGame(interaction, counter, questionCount)
-                    if (question.incorrect_answers[3].length > 25) return startGame(interaction, counter, questionCount)
+                    if (question.incorrect_answers[0].length > 25) return startGame(message, counter, questionCount)
+                    if (question.incorrect_answers[1].length > 25) return startGame(message, counter, questionCount)
+                    if (question.incorrect_answers[2].length > 25) return startGame(message, counter, questionCount)
+                    if (question.incorrect_answers[3].length > 25) return startGame(message, counter, questionCount)
                     const optionsDropDown = new MessageSelectMenu()
                         .setCustomId("Answer")
                         .setPlaceholder("Pick your answer here!")
@@ -231,20 +231,28 @@ module.exports = {
                                 value:question.incorrect_answers[3]
                             },
                         ])
-                    interaction.edit({ content:question.question, components:[[optionsDropDown]] })
+                    message.edit({ content:question.question, components:[[optionsDropDown]] })
                     await message.channel.awaitMessageComponent({ filterForQuestions, time: 60000 })
-                    .then(i => {
+                    .then(async i => {
                         if(i.values[0] == question.correct_answer){
                             i.update({ content:"Correct!", components:[] })
                         }else{
                             i.update({ content:"Incorrect.", components:[] })
                         }
-                        man = "done"
+                        console.log("buhoriginal")
+                        counter++
+                        console.log("Buh")
+                        console.log(questionCount + " " + counter)
+                        if(questionCount > counter){
+                            console.log("MAn")
+                            const thingy = await i.channel.send({ content: "Starting next question!"})
+                            startGame(thingy, counter, questionCount)
+                        }
                     })
                     .catch(console.error)
                 }else if(question.type == 'boolean') {
-                    if (question.incorrect_answers[0].length > 25) return startGame(interaction, counter, questionCount)
-                    if (question.incorrect_answers[1].length > 25) return startGame(interaction, counter, questionCount)
+                    if (question.incorrect_answers[0].length > 25) return startGame(message, counter, questionCount)
+                    if (question.incorrect_answers[1].length > 25) return startGame(message, counter, questionCount)
                     const optionsDropDown = new MessageSelectMenu()
                         .setCustomId("Answer")
                         .setPlaceholder("Pick your answer here!")
@@ -260,15 +268,23 @@ module.exports = {
                                 value:question.incorrect_answers[1]
                             }
                         ]) 
-                    interaction.edit({ content:question.question, components:[[optionsDropDown]] })
+                    message.edit({ content:question.question, components:[[optionsDropDown]] })
                     await message.channel.awaitMessageComponent({ filterForQuestions, time: 60000 })
-                    .then(i => {
+                    .then(async i => {
                         if(i.values[0] == question.correct_answer){
                             i.update({ content:"Correct!", components:[] })
                         }else{
                             i.update({ content:"Incorrect.", components:[] })
                         }
-                        man = "done"
+                        console.log("buhoriginal")
+                        counter++
+                        console.log("Buh")
+                        if(!questionCount == counter){
+                            console.log("MAn")
+                            const thingy = await i.channel.send({ content: "Starting next question!"})
+                            startGame(thingy, counter, questionCount)
+                        }
+
                     })
                 }
             }
@@ -324,16 +340,10 @@ module.exports = {
                     const thingy = await message.channel.send({ content:"Starting!" })
                     let i = 0
                     let man = "wait"
-                    let array = []
-                    for(i=0;i<=questionCount;i++) {
-                        array.push("hi")
-                    }
                     if (questionCount == 1) {
                         startGame(thingy, i, questionCount)
                     }else{
-                        for await (thing of array) {
-                            startGame(thingy, i, questionCount)
-                        }
+                            startGame(thingy, 0, questionCount)
                     }
                 }
             }
