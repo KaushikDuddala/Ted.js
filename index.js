@@ -98,7 +98,7 @@ const { Util } = require('discord.js')
 const queue = new Map()
 
 client.on('message', async message =>{
-  const prefix = "!"
+  const prefix = "~"
   if(message.author.bot) return
 
   const args = message.content.substring(prefix.length).split(" ")
