@@ -1,6 +1,6 @@
 //Getting some basic Requires for stuff
 const nodemon = require('nodemon')
-const { prefix, token, youtubeAPI, TopGGApi } = require('./config.json');
+const { prefix, token, youtubeAPI, TopGGApi } = require(proccess.env);
 const YouTube = require("discord-youtube-api");
 const youtube = new YouTube(youtubeAPI);
 const fs = require('fs');
