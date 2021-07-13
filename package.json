@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "engines": {
-    "node":"14.17.3",
-    "npm":"7.19.1"
+    "node": "14.17.3",
+    "npm": "7.19.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -33,7 +33,7 @@
     "node": "^14.0.0",
     "node-fetch": "^2.6.1",
     "node-opus": "^0.3.3",
-    "nodemon": "^2.0.9",
+    "nodemon": "^2.0.12",
     "npm": "^7.18.1",
     "opusscript": "0.0.8",
     "random-name": "^0.1.2",
