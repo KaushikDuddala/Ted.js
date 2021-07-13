@@ -4,7 +4,7 @@ const { prefix, token, youtubeAPI, TopGGApi } = require('./config.json');
 const YouTube = require("discord-youtube-api");
 const youtube = new YouTube(youtubeAPI);
 const fs = require('fs');
-const { Discord, Client, Collection } = require('discord.js');
+const { Discord, Client, Collection, MessageButton } = require('discord.js');
 const Topgg = require("@top-gg/sdk");
 var unirest = require("unirest");
 const client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES'] });
@@ -25,7 +25,6 @@ for (const folder of commandFolders) {
 		client.commands.set(command.name, command);
 	}
 }
-
 
 client.once('ready', async () => {
 	console.log('Ready!');
