@@ -1,20 +1,15 @@
 //Getting some basic Requires for stuff
-const nodemon = require('nodemon')
 const { prefix, token, youtubeAPI, TopGGApi } = require('./config.json');
 const YouTube = require("discord-youtube-api");
 const youtube = new YouTube(youtubeAPI);
 const fs = require('fs');
 const { Discord, Client, Collection, MessageButton } = require('discord.js');
-const Topgg = require("@top-gg/sdk");
-var unirest = require("unirest");
 const client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES'] });
-const Topggg = new Topgg.Api(TopGGApi)
 const express = require('express')
 
 //Command handling system
 client.commands = new Collection();
 const commandFolders = fs.readdirSync('./Commands');
-const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
 
 
 //getting the actual files and making them into commands
@@ -68,12 +63,10 @@ client.slashCommands = new Collection()
 
 const slashCommandsFolder = fs.readdirSync('./slashCommands')
 for (const folder of slashCommandsFolder) {
-  console.log("hi")
 	const slashCommandFiles = fs.readdirSync(`./slashCommands/${folder}`).filter(file => file.endsWith('.js'));
 	for (const file of slashCommandFiles) {
 		const command = require(`./slashCommands/${folder}/${file}`);
 		client.slashCommands.set(command.name, command);
-    console.log(command.name)
 	}
 }
 client.on('interactionCreate', interaction => {
