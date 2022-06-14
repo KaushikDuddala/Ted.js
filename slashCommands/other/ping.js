@@ -1,7 +1,7 @@
-module.exports = {
-    name:"ping",
-    description:"replies with pong",
-    execute(interaction){
-        interaction.reply({ content:"Pong!", ephemeral:true })
+module.exports = { 
+    name : "ping",
+    description : "Sends Pong!",
+    execute(interaction) {
+        interaction.reply({ content:"Pong!" })
     }
 }

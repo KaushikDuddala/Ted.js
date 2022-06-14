@@ -44,31 +44,41 @@ client.on('message', message => {
 	}
 });
 
-client.on('message', async message => {
 
-	if (message.content.toLowerCase() === '!deploy' && message.author.id === "747462192802168852") {
-    const data = [
-      {
-        name: 'ping',
-        description: 'Replies with Pong!'
-      },
-    ]
-    const commands = await client.application.commands.set(data);
-    console.log(commands)
-	}
-});
 
 //Self-Made slash commands handler
 client.slashCommands = new Collection()
-
+const slashCommandsData = []
 const slashCommandsFolder = fs.readdirSync('./slashCommands')
 for (const folder of slashCommandsFolder) {
 	const slashCommandFiles = fs.readdirSync(`./slashCommands/${folder}`).filter(file => file.endsWith('.js'));
 	for (const file of slashCommandFiles) {
 		const command = require(`./slashCommands/${folder}/${file}`);
 		client.slashCommands.set(command.name, command);
+    if(!command.options){
+      data = {
+        name:command.name,
+        description:command.description,
+        options:[]
+      }
+    }else{
+      data = {
+        name:command.name,
+        description:command.description,
+        options:command.options
+      }
+    }
+    slashCommandsData.push(data)
 	}
 }
+client.on('message', async message => {
+
+	if (message.content.toLowerCase() === '!deploy' && message.author.id === "747462192802168852") {
+    console.log(slashCommandsData)
+    const commands = await client.application.commands.set(slashCommandsData);
+    console.log(commands)
+	}
+});
 client.on('interactionCreate', interaction => {
   console.log(client.slashCommands)
 	if (!interaction.isCommand()) return;
@@ -83,14 +93,15 @@ client.on('interactionCreate', interaction => {
 
 
 
+
 client.login(token);
 
-//MUSICconst ytdl = require('ytdl-core')
+//MUSIC
+const ytdl = require('ytdl-core')
 const { Util } = require('discord.js')
 const queue = new Map()
 
 client.on('message', async message =>{
-  const prefix = "~"
   if(message.author.bot) return
 
   const args = message.content.substring(prefix.length).split(" ")
@@ -99,6 +110,7 @@ client.on('message', async message =>{
 
   if(message.content.startsWith(`${prefix}play`)){
     const voiceChannel = message.member.voice.channel
+    console.log(voiceChannel);
     if(!voiceChannel) return message.channel.send(":x: You aren't in a voice channel. Please join one before you attempt to use the command.")
     const permissions = voiceChannel.permissionsFor(message.client.user)
     if(!permissions.has('CONNECT')) return message.channel.send("I do not have permission to join the voice channel you are currently in.")
@@ -160,14 +172,14 @@ client.on('message', async message =>{
   }else if (message.content.startsWith(`${prefix}volume`) || message.content.startsWith(`${prefix}vol`)){
     if(!message.member.voice.channel) return message.channel.send("Please join a voice channel first.")
     if(!serverQueue) return message.channel.send("Nothing is playing")
-    if (!args[1]) return message.channel.send(`The current volume is **${serverQueue.volume}**`)
-    if(isNaN(args[1])) return message.channel.send("That is not a number.. Please use the numerical version such as '1' or '1'")
-    serverQueue.volume = args[1]
-    serverQueue.connection.dispatcher.setVolumeLogarithmic(args[1] / 100)
+    if (!args[1]) return message.channel.send(`The current volume is **${serverQueue.volume*100}**`)
+    if(isNaN(args[1])) return message.channel.send("That is not a number.. Please use the numerical version such as '10' or '20'")
+    serverQueue.volume = args[1]/100
+    serverQueue.connection.dispatcher.setVolumeLogarithmic(args[1]/100)
     message.channel.send(`I have changed the volume to ${args[1]}`)
   }else if (message.content.startsWith(`${prefix}np`)) {
       if(!serverQueue) return message.channel.send("there is nothing playing")
-      message.channel.send(`Currently Playing ${serverQueue.songs[0].title}`)
+      message.channel.send(`Currently Playing **${serverQueue.songs[0].title}**`)
   }else if (message.content.startsWith(`${prefix}pause`)){
     if (!message.member.voice.channel) return message.channel.send("You must be in a voice channel to pause it.")
     if (!serverQueue) return message.channel.send("There is nothing playing")
@@ -235,7 +247,7 @@ async function play(guild, song, Channel) {
       console.log(error)
       message.channel.send("There was a error, **" + error + "**.")
     })
-    dispatcher.setVolumeLogarithmic(serverQueue.volume / 5)
+    dispatcher.setVolumeLogarithmic(serverQueue.volume)
 
     serverQueue.textChannel.send(`Started playing: **${song.title}***`)
 
