@@ -240,7 +240,7 @@ async function play(guild, song, Channel) {
     const connection = await Channel.join(); 
     const dispatcher = connection.play(ytdl(song.url, { quality: 'highestaudio' }))
     .on('finish', () => {
-      if (serverQueue.looped) {}else{serverQueue.songs.shift()}
+      if (serverQueue.looped){}else{serverQueue.songs.shift()}
       play(guild, serverQueue.songs[0], Channel)
     })
     .on('error', error => {
