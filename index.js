@@ -1,5 +1,5 @@
 //Getting some basic Requires for stuff
-const { prefix, token, youtubeAPI, TopGGApi } = require('./config.json');
+const { prefix, token, youtubeAPI, TopGGApi } = require('/home/test/Projects/Ted.js/config.json');
 const YouTube = require("discord-youtube-api");
 const youtube = new YouTube(youtubeAPI);
 const fs = require('fs');
@@ -9,14 +9,14 @@ const express = require('express')
 
 //Command handling system
 client.commands = new Collection();
-const commandFolders = fs.readdirSync('./Commands');
+const commandFolders = fs.readdirSync('/home/test/Projects/Ted.js/Commands/');
 
 
 //getting the actual files and making them into commands
 for (const folder of commandFolders) {
-	const commandFiles = fs.readdirSync(`./Commands/${folder}`).filter(file => file.endsWith('.js'));
+	const commandFiles = fs.readdirSync(`/home/test/Projects/Ted.js/Commands/${folder}`).filter(file => file.endsWith('.js'));
 	for (const file of commandFiles) {
-		const command = require(`./Commands/${folder}/${file}`);
+		const command = require(`/home/test/Projects/Ted.js/Commands/${folder}/${file}`);
 		client.commands.set(command.name, command);
 	}
 }
@@ -49,11 +49,11 @@ client.on('message', message => {
 //Self-Made slash commands handler
 client.slashCommands = new Collection()
 const slashCommandsData = []
-const slashCommandsFolder = fs.readdirSync('./slashCommands')
+const slashCommandsFolder = fs.readdirSync('/home/test/Projects/Ted.js/slashCommands')
 for (const folder of slashCommandsFolder) {
-	const slashCommandFiles = fs.readdirSync(`./slashCommands/${folder}`).filter(file => file.endsWith('.js'));
+	const slashCommandFiles = fs.readdirSync(`/home/test/Projects/Ted.js/slashCommands/${folder}`).filter(file => file.endsWith('.js'));
 	for (const file of slashCommandFiles) {
-		const command = require(`./slashCommands/${folder}/${file}`);
+		const command = require(`/home/test/Projects/Ted.js/slashCommands/${folder}/${file}`);
 		client.slashCommands.set(command.name, command);
     if(!command.options){
       data = {
@@ -247,9 +247,10 @@ async function play(guild, song, Channel) {
       console.log(error)
       message.channel.send("There was a error, **" + error + "**.")
     })
+    serverQueue.volume = 0.5
     dispatcher.setVolumeLogarithmic(serverQueue.volume)
 
-    serverQueue.textChannel.send(`Started playing: **${song.title}***`)
+    serverQueue.textChannel.send(`Started playing: **${song.title}*** at volume **${serverQueue.volume}**`)
 
 }
 
