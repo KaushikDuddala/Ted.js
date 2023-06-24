@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/opus": "^0.5.3",
+    "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.10.0",
     "@top-gg/sdk": "^3.1.1",
     "an-array-of-english-words": "^2.0.0",
