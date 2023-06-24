@@ -37,7 +37,7 @@
     "node-fetch": "^2.6.1",
     "node-opus": "^0.3.3",
     "nodemon": "^2.0.12",
-    "npm": "^7.18.1",
+    "npm": "^8.11.0",
     "opusscript": "^0.0.8",
     "random-name": "^0.1.2",
     "readline-sync": "^1.4.10",
